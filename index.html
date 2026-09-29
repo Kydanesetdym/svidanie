@@ -2,594 +2,332 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Приглашение на свидание 💌</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Приглашение 💕</title>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --pink-soft: #fde4ec;
-    --pink-medium: #f8c8d8;
-    --lavender: #e8dff5;
-    --cream: #fff8f3;
-    --rose: #d4a5b5;
-    --text-dark: #5a4a52;
-    --text-light: #8a7a82;
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(135deg, #ffd1dc 0%, #ff9eb5 50%, #ff6b9d 100%);
+    overflow: hidden;
+    color: #4a1d3f;
   }
-  body {
-    font-family: 'Montserrat', sans-serif;
-    background: linear-gradient(135deg, var(--cream) 0%, var(--pink-soft) 50%, var(--lavender) 100%);
-    min-height: 100vh;
-    color: var(--text-dark);
-    overflow-x: hidden;
-    position: relative;
-    padding: 40px 20px;
-  }
-  .hearts-bg {
-    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 0; overflow: hidden;
-  }
+  body { display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+  .hearts { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
   .heart {
-    position: absolute; font-size: 20px; opacity: 0.3;
-    animation: floatUp linear infinite;
+    position: absolute; bottom: -50px; font-size: 24px;
+    animation: float linear infinite; opacity: 0.7;
   }
-  @keyframes floatUp {
-    0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-    10% { opacity: 0.3; } 90% { opacity: 0.3; }
-    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
-  }
-  .container {
-    max-width: 600px; margin: 0 auto; position: relative; z-index: 1;
+  @keyframes float {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.8; }
+    100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
   }
 
-  /* ===== ЭКРАН ПРИВЕТСТВИЯ ===== */
-  #welcomeScreen {
-    text-align: center;
-    padding: 60px 20px;
-    animation: fadeIn 0.8s ease;
+  .screen {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 24px; text-align: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 1;
   }
-  #welcomeScreen .big-emoji {
-    font-size: 5rem;
-    display: block;
-    margin-bottom: 30px;
-    animation: heartbeat 1.5s ease infinite;
+  .screen.active { opacity: 1; pointer-events: auto; }
+
+  .card {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    border-radius: 28px;
+    padding: 32px 24px;
+    max-width: 420px; width: 100%;
+    box-shadow: 0 20px 60px rgba(255, 107, 157, 0.35);
+    animation: pop 0.6s cubic-bezier(.2,1.3,.5,1);
   }
-  #welcomeScreen h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 5vw, 2.8rem);
-    font-weight: 400;
-    color: var(--text-dark);
-    margin-bottom: 20px;
-    line-height: 1.3;
-    transition: all 0.4s ease;
-  }
-  #welcomeScreen .welcome-subtitle {
-    font-size: 1.1rem;
-    color: var(--text-light);
-    font-style: italic;
-    margin-bottom: 50px;
-    min-height: 30px;
-    transition: all 0.4s ease;
-  }
-  .welcome-buttons {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-    position: relative;
-    min-height: 80px;
-  }
-  .btn-yes, .btn-no {
-    padding: 16px 50px;
-    border: none;
-    border-radius: 30px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: 0.5px;
-  }
-  .btn-yes {
-    background: linear-gradient(135deg, #f8c8d8, #e8b4c8);
-    color: white;
-    box-shadow: 0 4px 15px rgba(248, 200, 216, 0.4);
-  }
-  .btn-yes:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 0 8px 25px rgba(248, 200, 216, 0.6);
-  }
-  .btn-no {
-    background: rgba(255, 255, 255, 0.7);
-    color: var(--text-light);
-    border: 1px solid rgba(212, 165, 181, 0.3);
-    position: relative;
-    transition: all 0.2s ease;
+  @keyframes pop {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
   }
 
-  /* Когда кнопка "Нет" становится убегающей */
-  .btn-no.running {
-    position: fixed;
-    z-index: 50;
-    transition: top 0.3s ease, left 0.3s ease;
-    pointer-events: auto;
-  }
-
-  /* Грустное сообщение */
-  .sad-message {
-    display: none;
-    text-align: center;
-    padding: 40px 20px;
-    animation: fadeIn 0.6s ease;
-  }
-  .sad-message .big-emoji {
-    font-size: 5rem;
-    display: block;
-    margin-bottom: 25px;
-    animation: sadShake 2s ease infinite;
-  }
-  .sad-message h1 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(1.8rem, 4.5vw, 2.5rem);
-    font-weight: 400;
-    color: var(--text-dark);
-    margin-bottom: 15px;
-    line-height: 1.3;
-  }
-  .sad-message p {
-    color: var(--text-light);
-    font-style: italic;
-    margin-bottom: 30px;
-  }
-  .btn-comeback {
-    padding: 14px 40px;
-    border: none;
-    border-radius: 30px;
-    background: linear-gradient(135deg, #f8c8d8, #e8b4c8);
-    color: white;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(248, 200, 216, 0.4);
-    transition: all 0.3s ease;
-  }
-  .btn-comeback:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(248, 200, 216, 0.6);
-  }
-
-  @keyframes sadShake {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-5deg); }
-    75% { transform: rotate(5deg); }
-  }
-
-  /* ===== ОСНОВНАЯ ФОРМА ===== */
-  #mainForm { display: none; animation: fadeIn 0.8s ease; }
-  #mainForm.show { display: block; }
-
-  header { text-align: center; margin-bottom: 40px; }
-  h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 5vw, 2.8rem);
-    font-weight: 400; color: var(--text-dark);
-    margin-bottom: 15px;
-  }
-  .subtitle {
-    font-size: 1.1rem; color: var(--text-light);
-    font-weight: 300; font-style: italic;
-  }
-  .form-group { margin-bottom: 30px; }
-  .form-label {
-    display: block; font-family: 'Cormorant Garamond', serif;
-    font-size: 1.4rem; color: var(--text-dark);
-    margin-bottom: 15px; text-align: center;
-  }
-  .themes-grid {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-  .theme-card {
-    background: rgba(255, 255, 255, 0.6);
-    border: 2px solid transparent;
-    border-radius: 15px; padding: 20px 10px;
-    text-align: center; cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 0.95rem; font-weight: 500;
-  }
-  .theme-card:hover { background: white; transform: translateY(-3px); }
-  .theme-card.active {
-    border-color: var(--rose);
-    background: white;
-    box-shadow: 0 4px 15px rgba(212, 165, 181, 0.3);
-    color: var(--text-dark);
-  }
-  .theme-card .emoji { font-size: 1.8rem; display: block; margin-bottom: 8px; }
-  
-  .custom-input {
-    display: none; margin-top: 15px;
-    animation: fadeIn 0.4s ease;
-  }
-  .custom-input.show { display: block; }
-  
-  input[type="text"], input[type="date"], input[type="time"], textarea {
-    width: 100%; padding: 15px;
-    border: 1px solid rgba(212, 165, 181, 0.4);
-    border-radius: 15px; background: rgba(255, 255, 255, 0.8);
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1rem; color: var(--text-dark);
-    outline: none; transition: border-color 0.3s;
-  }
-  input:focus, textarea:focus { border-color: var(--rose); }
-  textarea { resize: vertical; min-height: 80px; }
-
-  .datetime-row { display: flex; gap: 15px; }
-  .datetime-row > div { flex: 1; }
+  h1 { font-size: 26px; margin-bottom: 20px; line-height: 1.3; }
+  h2 { font-size: 22px; margin-bottom: 20px; }
+  p { font-size: 18px; margin-bottom: 20px; }
 
   .btn {
-    width: 100%; padding: 16px; border: none; border-radius: 30px;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.05rem; font-weight: 500;
-    cursor: pointer; transition: all 0.3s ease;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-  }
-  .btn-primary {
-    background: linear-gradient(135deg, #f8c8d8, #e8b4c8);
+    display: block;
+    width: 100%;
+    padding: 16px 20px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: linear-gradient(135deg, #ff6b9d, #ff4081);
     color: white;
-    box-shadow: 0 4px 15px rgba(248, 200, 216, 0.4);
+    box-shadow: 0 6px 20px rgba(255, 64, 129, 0.4);
   }
-  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(248, 200, 216, 0.6); }
-  .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-  .btn-calendar {
-    background: white; color: var(--text-dark);
-    border: 1px solid rgba(212, 165, 181, 0.4);
-    margin-top: 15px; display: none;
+  .btn:active { transform: scale(0.96); }
+  .btn.secondary {
+    background: white;
+    color: #ff4081;
+    border: 2px solid #ff4081;
+    box-shadow: none;
   }
-  .btn-calendar.show { display: flex; }
-  .btn-calendar:hover { background: var(--pink-soft); }
-
-  .success-message {
-    display: none; text-align: center; padding: 40px 20px;
-    background: rgba(255, 255, 255, 0.7);
-    border-radius: 20px; animation: fadeIn 0.6s ease;
-  }
-  .success-message .emoji { font-size: 4rem; display: block; margin-bottom: 20px; }
-  .success-message h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 2rem; font-weight: 400; margin-bottom: 10px;
+  .btn.small {
+    padding: 12px 16px;
+    font-size: 16px;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  #noBtn {
+    position: absolute;
+    transition: all 0.3s ease;
   }
-  @keyframes heartbeat {
+
+  .sad { font-size: 60px; margin: 20px 0; }
+
+  input[type="datetime-local"] {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #ff6b9d;
+    border-radius: 12px;
+    font-size: 16px;
+    margin: 16px 0;
+    background: white;
+    color: #4a1d3f;
+  }
+
+  .theme-btn {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+    padding: 14px 18px;
+  }
+  .theme-btn .emoji { font-size: 24px; margin-right: 12px; }
+
+  .final-heart {
+    font-size: 80px;
+    animation: beat 1s ease-in-out infinite;
+  }
+  @keyframes beat {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.15); }
   }
 
-  .notification {
-    position: fixed; bottom: 30px; left: 50%;
-    transform: translateX(-50%) translateY(100px);
-    background: white; padding: 15px 25px;
-    border-radius: 30px;
-    box-shadow: 0 8px 25px rgba(212, 165, 181, 0.3);
-    color: var(--text-dark);
-    transition: transform 0.4s ease; z-index: 200;
+  .loader {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
   }
-  .notification.show { transform: translateX(-50%) translateY(0); }
-
-  @media (max-width: 600px) {
-    .themes-grid { grid-template-columns: 1fr; }
-    .welcome-buttons { flex-direction: column; align-items: center; }
-  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
 
-<div class="hearts-bg" id="heartsBg"></div>
+<div class="hearts" id="hearts"></div>
 
-<div class="container">
-
-  <!-- ===== ЭКРАН 1: ПРИВЕТСТВИЕ ===== -->
-  <div id="welcomeScreen">
-    <span class="big-emoji">💌</span>
-    <h1 id="welcomeTitle">Твой любимый муж<br>приглашает тебя на свидание</h1>
-    <p class="welcome-subtitle" id="welcomeSubtitle">Согласишься? 🌸</p>
-    <div class="welcome-buttons">
-      <button class="btn-yes" onclick="sayYes()">Да, конечно! 💕</button>
-      <button class="btn-no" id="btnNo">Нет</button>
-    </div>
+<!-- Экран 1: Приглашение -->
+<div class="screen active" id="screen1">
+  <div class="card">
+    <h1>💖 Твой любимый муж<br>приглашает тебя на свидание 💖</h1>
+    <p>Пойдёшь со мной?</p>
+    <button class="btn" onclick="sayYes()">Да 💕</button>
+    <button class="btn secondary" id="noBtn" onmouseover="runAway()" ontouchstart="runAway()" onclick="sayNo()">Нет</button>
   </div>
-
-  <!-- ===== ЭКРАН 2: ГРУСТНЫЙ (если пытается нажать "Нет") ===== -->
-  <div class="sad-message" id="sadScreen">
-    <span class="big-emoji">🥺</span>
-    <h1>Ты правда не хочешь идти со мной на свидание?(((</h1>
-    <p>Я так старался, готовил для тебя сюрприз...</p>
-    <button class="btn-comeback" onclick="comeBack()">Ладно, уговорил! 💕</button>
-  </div>
-
-  <!-- ===== ЭКРАН 3: ОСНОВНАЯ ФОРМА ===== -->
-  <div id="mainForm">
-    <header>
-      <h2>Составь план нашего идеального дня 💕</h2>
-      <p class="subtitle">Выбери, что тебе больше по душе, а я всё организую</p>
-    </header>
-
-    <form id="dateForm">
-      <div class="form-group">
-        <label class="form-label">Что выберем? 🌸</label>
-        <div class="themes-grid">
-          <div class="theme-card" data-value="Аквапарк 🎢" onclick="selectTheme(this)">
-            <span class="emoji">🎢</span>Аквапарк
-          </div>
-          <div class="theme-card" data-value="Роллы и вкусная еда 🍣" onclick="selectTheme(this)">
-            <span class="emoji">🍣</span>Роллы
-          </div>
-          <div class="theme-card" data-value="Романтическая прогулка 🚶‍♀️" onclick="selectTheme(this)">
-            <span class="emoji">🚶‍♀️</span>Прогулка
-          </div>
-          <div class="theme-card" data-value="Поездка в другой город 🚗" onclick="selectTheme(this)">
-            <span class="emoji">🚗</span>Поездка в город
-          </div>
-          <div class="theme-card" data-value="Уютный вечер с сериалом 🎬" onclick="selectTheme(this)">
-            <span class="emoji">🎬</span>Сериал
-          </div>
-          <div class="theme-card" data-value="Свой вариант" onclick="selectTheme(this)">
-            <span class="emoji">✨</span>Свой вариант
-          </div>
-        </div>
-        <input type="hidden" id="selectedTheme" required>
-        <div class="custom-input" id="customInputWrapper">
-          <textarea id="customThemeText" placeholder="Напиши свою идею здесь..."></textarea>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="form-label">Когда? 🗓️</label>
-        <div class="datetime-row">
-          <div><input type="date" id="dateInput" required></div>
-          <div><input type="time" id="timeInput" required></div>
-        </div>
-      </div>
-
-      <button type="submit" class="btn btn-primary" id="submitBtn">
-        💌 Отправить мой выбор
-      </button>
-    </form>
-
-    <div class="success-message" id="successMessage">
-      <span class="emoji">🎉</span>
-      <h2>Я получил твой выбор!</h2>
-      <p style="color: var(--text-light); margin-bottom: 20px;">Уже начинаю готовиться. А пока добавь это в календарь, чтобы мы точно не забыли!</p>
-      <button class="btn btn-calendar show" onclick="downloadICS()">
-        📅 Добавить в Календарь (iPhone)
-      </button>
-    </div>
-  </div>
-
 </div>
 
-<div class="notification" id="notification"></div>
+<!-- Экран 1.5: Уговор -->
+<div class="screen" id="screen1b">
+  <div class="card">
+    <div class="sad">🥺</div>
+    <h2>Ты правда не хочешь идти со мной на свидание?</h2>
+    <button class="btn" onclick="backToStart()">Ладно, уговорил 😊</button>
+  </div>
+</div>
+
+<!-- Экран 2: Выбор темы -->
+<div class="screen" id="screen2">
+  <div class="card">
+    <h2>Ура! 🎉 Что будем делать?</h2>
+    <button class="btn theme-btn" onclick="selectTheme('Аквапарк 🏊‍♀️')"><span class="emoji">🏊‍♀️</span> Аквапарк</button>
+    <button class="btn theme-btn" onclick="selectTheme('Роллы 🍣')"><span class="emoji">🍣</span> Роллы</button>
+    <button class="btn theme-btn" onclick="selectTheme('Сериал 📺')"><span class="emoji">📺</span> Сериал</button>
+    <button class="btn theme-btn" onclick="selectTheme('Прогулка пешком 🚶‍♀️')"><span class="emoji">🚶‍♀️</span> Прогулка пешком</button>
+    <button class="btn theme-btn" onclick="selectTheme('Поездка на машине 🚗')"><span class="emoji">🚗</span> Поездка на машине</button>
+  </div>
+</div>
+
+<!-- Экран 3: Выбор времени -->
+<div class="screen" id="screen3">
+  <div class="card">
+    <h2>Когда встретимся? 🕐</h2>
+    <input type="datetime-local" id="dateTime">
+    <button class="btn" onclick="selectTime()">Добавить в календарь 📅</button>
+    <button class="btn secondary small" onclick="selectTime(true)">Пропустить напоминание</button>
+  </div>
+</div>
+
+<!-- Экран 4: Финал -->
+<div class="screen" id="screen4">
+  <div class="card">
+    <div class="final-heart">💖</div>
+    <h1>Люблю тебя!</h1>
+    <p>Буду готов к этому времени! 🥰</p>
+  </div>
+</div>
 
 <script>
-  // ==========================================
-  // 🔑 НАСТРОЙКИ TELEGRAM (ЗАПОЛНИ ЭТО!)
-  // ==========================================
-  const BOT_TOKEN = 8818498469:AAHJrkzNuxzmpM-lGNxtVsEaNZhHvE2Vjo8;
-  const CHAT_ID = 869850863;
-  // ==========================================
+  // ========== НАСТРОЙКИ TELEGRAM ==========
+  const TELEGRAM_BOT_TOKEN = '8818498469:AAHJrkzNuxzmpM-lGNxtVsEaNZhHvE2Vjo8';   // ← вставь сюда токен
+  const TELEGRAM_CHAT_ID = '869850863';       // ← вставь сюда свой chat_id
+  // ========================================
+
+  const chosen = { theme: '', date: '' };
 
   // Сердечки на фоне
-  (function createHearts() {
-    const bg = document.getElementById('heartsBg');
-    const hearts = ['💗','💕','💖','🌸','✿','❀'];
+  function spawnHearts() {
+    const container = document.getElementById('hearts');
+    const emojis = ['💖','💕','💗','💓','❤️','💘'];
     for (let i = 0; i < 15; i++) {
-      const heart = document.createElement('div');
-      heart.className = 'heart';
-      heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-      heart.style.left = Math.random() * 100 + '%';
-      heart.style.animationDuration = (Math.random() * 15 + 15) + 's';
-      heart.style.animationDelay = Math.random() * 20 + 's';
-      heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
-      bg.appendChild(heart);
+      const h = document.createElement('div');
+      h.className = 'heart';
+      h.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      h.style.left = Math.random() * 100 + '%';
+      h.style.animationDuration = (8 + Math.random() * 8) + 's';
+      h.style.animationDelay = Math.random() * 10 + 's';
+      h.style.fontSize = (18 + Math.random() * 20) + 'px';
+      container.appendChild(h);
     }
-  })();
+  }
+  spawnHearts();
 
-  // ===== ЛОГИКА УБЕГАЮЩЕЙ КНОПКИ "НЕТ" =====
-  const btnNo = document.getElementById('btnNo');
-  const welcomeTitle = document.getElementById('welcomeTitle');
-  const welcomeSubtitle = document.getElementById('welcomeSubtitle');
-  let noAttempts = 0;
-  const sadMessages = [
-    { title: "Ты правда не хочешь идти со мной на свидание?((( ", subtitle: "Я так расстроился..." },
-    { title: "Ну пожааалуйста... 🥺", subtitle: "Обещаю, будет весело!" },
-    { title: "Может, передумаешь? 💔", subtitle: "Я очень старался..." },
-    { title: "Моё сердечко плачет... 😢", subtitle: "Не оставляй меня..." }
-  ];
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
 
+  function sayYes() { showScreen('screen2'); }
+
+  function sayNo() {
+    showScreen('screen1b');
+  }
+
+  function backToStart() { showScreen('screen1'); }
+
+  // Кнопка "Нет" убегает
+  let runCount = 0;
   function runAway() {
-    noAttempts++;
+    runCount++;
+    const btn = document.getElementById('noBtn');
+    const maxX = window.innerWidth - btn.offsetWidth - 40;
+    const maxY = window.innerHeight - btn.offsetHeight - 40;
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    btn.style.position = 'fixed';
+    btn.style.left = x + 'px';
+    btn.style.top = y + 'px';
     
-    // Меняем текст на грустный
-    const msg = sadMessages[Math.min(noAttempts - 1, sadMessages.length - 1)];
-    welcomeTitle.innerHTML = msg.title;
-    welcomeSubtitle.textContent = msg.subtitle;
-    welcomeTitle.style.color = '#a8909a';
-
-    // Превращаем кнопку в убегающую
-    if (!btnNo.classList.contains('running')) {
-      const rect = btnNo.getBoundingClientRect();
-      btnNo.classList.add('running');
-      btnNo.style.top = rect.top + 'px';
-      btnNo.style.left = rect.left + 'px';
-      btnNo.style.width = rect.width + 'px';
-    }
-
-    // Перемещаем в случайное место
-    const btnWidth = btnNo.offsetWidth;
-    const btnHeight = btnNo.offsetHeight;
-    const maxX = window.innerWidth - btnWidth - 20;
-    const maxY = window.innerHeight - btnHeight - 20;
-    const newX = Math.max(20, Math.random() * maxX);
-    const newY = Math.max(20, Math.random() * maxY);
-    
-    btnNo.style.top = newY + 'px';
-    btnNo.style.left = newX + 'px';
-
-    // После 4 попыток — показываем грустный экран
-    if (noAttempts >= 4) {
-      setTimeout(() => {
-        document.getElementById('welcomeScreen').style.display = 'none';
-        btnNo.style.display = 'none';
-        document.getElementById('sadScreen').style.display = 'block';
-      }, 400);
+    // После 3 попыток — автоматически показываем уговор
+    if (runCount >= 3) {
+      setTimeout(() => sayNo(), 500);
     }
   }
 
-  // Наведение мыши (десктоп)
-  btnNo.addEventListener('mouseenter', runAway);
-  // Касание (мобильные)
-  btnNo.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    runAway();
-  });
-  // Если всё-таки нажали (например, клавиатурой)
-  btnNo.addEventListener('click', (e) => {
-    e.preventDefault();
-    runAway();
-  });
-
-  function sayYes() {
-    document.getElementById('welcomeScreen').style.display = 'none';
-    if (btnNo.classList.contains('running')) btnNo.style.display = 'none';
-    document.getElementById('mainForm').classList.add('show');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  function selectTheme(theme) {
+    chosen.theme = theme;
+    showScreen('screen3');
   }
 
-  function comeBack() {
-    document.getElementById('sadScreen').style.display = 'none';
-    // Возвращаем приветственный экран в исходное состояние
-    welcomeTitle.innerHTML = 'Твой любимый муж<br>приглашает тебя на свидание';
-    welcomeSubtitle.textContent = 'Согласишься? 🌸';
-    welcomeTitle.style.color = '';
-    noAttempts = 0;
-    document.getElementById('welcomeScreen').style.display = 'block';
-    btnNo.style.display = 'block';
-    btnNo.classList.remove('running');
-    btnNo.style.top = '';
-    btnNo.style.left = '';
-    btnNo.style.width = '';
-  }
-
-  // ===== ЛОГИКА ФОРМЫ =====
-  let finalTheme = "";
-  let finalDate = "";
-  let finalTime = "";
-
-  function selectTheme(element) {
-    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
-    element.classList.add('active');
-    
-    const value = element.dataset.value;
-    document.getElementById('selectedTheme').value = value;
-    finalTheme = value;
-
-    const customWrapper = document.getElementById('customInputWrapper');
-    if (value === "Свой вариант") {
-      customWrapper.classList.add('show');
-      document.getElementById('customThemeText').required = true;
-    } else {
-      customWrapper.classList.remove('show');
-      document.getElementById('customThemeText').required = false;
-      document.getElementById('customThemeText').value = "";
+  function selectTime(skipCalendar) {
+    const dt = document.getElementById('dateTime').value;
+    if (!dt) {
+      alert('Пожалуйста, выбери дату и время 🥰');
+      return;
     }
+    const dateObj = new Date(dt);
+    chosen.date = dateObj.toLocaleString('ru-RU', {
+      day: '2-digit', month: '2-digit', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+
+    // Добавление в календарь iPhone (через .ics файл)
+    if (!skipCalendar) {
+      downloadICS(dateObj);
+    }
+
+    // Отправляем уведомление в Telegram
+    sendTelegramNotification();
+
+    showScreen('screen4');
   }
 
-  document.getElementById('dateForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
+  // Создание .ics файла для календаря iPhone
+  function downloadICS(dateObj) {
+    const start = dateObj.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const endDate = new Date(dateObj.getTime() + 3 * 60 * 60 * 1000); // +3 часа
+    const end = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     
-    const customText = document.getElementById('customThemeText').value;
-    const themeToSend = finalTheme === "Свой вариант" ? `Свой вариант: ${customText}` : finalTheme;
-    const dateVal = document.getElementById('dateInput').value;
-    const timeVal = document.getElementById('timeInput').value;
+    const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART:${start}
+DTEND:${end}
+SUMMARY:Свидание 💕 ${chosen.theme}
+DESCRIPTION:Твой любимый муж ждёт тебя!
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Свидание через 30 минут 💕
+END:VALARM
+END:VEVENT
+END:VCALENDAR`;
 
-    finalTheme = themeToSend;
-    finalDate = dateVal;
-    finalTime = timeVal;
+    const blob = new Blob([ics], { type: 'text/calendar' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'date.ics';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '⏳ Отправляю...';
+  // Отправка уведомления в Telegram
+  async function sendTelegramNotification() {
+    const message = `💕 *Новое свидание!* 💕\n\n` +
+                    `🎯 *Тема:* ${chosen.theme}\n` +
+                    `📅 *Когда:* ${chosen.date}\n\n` +
+                    `Она согласилась! 🥰`;
 
-    const message = `💌 <b>Новое приглашение на свидание!</b>\n\n🌸 <b>Тема:</b> ${themeToSend}\n🗓 <b>Дата:</b> ${formatDateRu(dateVal)}\n⏰ <b>Время:</b> ${timeVal}`;
-
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    
     try {
-      const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          chat_id: CHAT_ID,
+          chat_id: TELEGRAM_CHAT_ID,
           text: message,
-          parse_mode: 'HTML'
+          parse_mode: 'Markdown'
         })
       });
-
-      if (response.ok) {
-        document.getElementById('dateForm').style.display = 'none';
-        document.getElementById('successMessage').style.display = 'block';
-        showNotification('💕 Выбор отправлен!');
-      } else {
-        throw new Error('Ошибка Telegram');
+      
+      if (!response.ok) {
+        console.error('Telegram error:', await response.text());
       }
     } catch (error) {
-      console.error(error);
-      showNotification('⚠️ Ошибка отправки. Проверь интернет или настройки бота.');
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = '💌 Отправить мой выбор';
+      console.error('Failed to send notification:', error);
     }
-  });
-
-  function formatDateRu(dateStr) {
-    const options = { day: 'numeric', month: 'long', year: 'numeric' };
-    return new Date(dateStr).toLocaleDateString('ru-RU', options);
-  }
-
-  function downloadICS() {
-    if (!finalDate || !finalTime) return;
-    const d = new Date(finalDate + 'T' + finalTime);
-    const pad = (n) => n.toString().padStart(2, '0');
-    const startUTC = `${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
-    const endD = new Date(d.getTime() + 3 * 60 * 60 * 1000);
-    const endUTC = `${endD.getUTCFullYear()}${pad(endD.getUTCMonth()+1)}${pad(endD.getUTCDate())}T${pad(endD.getUTCHours())}${pad(endD.getUTCMinutes())}00Z`;
-
-    const icsContent = [
-      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Romantic Date//RU',
-      'BEGIN:VEVENT', `UID:${Date.now()}@romantic-date`, `DTSTAMP:${startUTC}`,
-      `DTSTART:${startUTC}`, `DTEND:${endUTC}`,
-      `SUMMARY:Свидание: ${finalTheme.replace(/<[^>]*>/g, '')}`,
-      `DESCRIPTION:Наше идеальное свидание! 💕`,
-      'END:VEVENT', 'END:VCALENDAR'
-    ].join('\r\n');
-
-    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'our_date.ics';
-    document.body.appendChild(a); a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showNotification('📅 Файл календаря скачан! Открой его на iPhone.');
-  }
-
-  function showNotification(text) {
-    const n = document.getElementById('notification');
-    n.textContent = text;
-    n.classList.add('show');
-    setTimeout(() => n.classList.remove('show'), 3000);
   }
 </script>
 
