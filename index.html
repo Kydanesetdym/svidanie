@@ -169,6 +169,7 @@
   <div class="card">
     <h2>Когда встретимся? 🕐</h2>
     <input type="datetime-local" id="dateTime">
+    <button class="btn" id="confirmTimeBtn">Готово! 💕</button>
   </div>
 </div>
 
@@ -293,17 +294,8 @@
     showScreen('screen2');
   });
 
-  // Добавить в календарь
-  document.getElementById('addCalendarBtn').addEventListener('click', function() {
-    selectTime(false);
-  });
-
-  // Пропустить напоминание
-  document.getElementById('skipCalendarBtn').addEventListener('click', function() {
-    selectTime(true);
-  });
-
-  function selectTime(skipCalendar) {
+  // Подтверждение времени
+  document.getElementById('confirmTimeBtn').addEventListener('click', function() {
     const dt = document.getElementById('dateTime').value;
     if (!dt) {
       alert('Пожалуйста, выбери дату и время 🥰');
@@ -315,44 +307,9 @@
       hour: '2-digit', minute: '2-digit'
     });
 
-    if (!skipCalendar) {
-      downloadICS(dateObj);
-    }
-
     sendTelegramNotification();
     showScreen('screen4');
-  }
-
-  function downloadICS(dateObj) {
-    const start = dateObj.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    const endDate = new Date(dateObj.getTime() + 3 * 60 * 60 * 1000);
-    const end = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    
-    const ics = `BEGIN:VCALENDAR
-VERSION:2.0
-BEGIN:VEVENT
-DTSTART:${start}
-DTEND:${end}
-SUMMARY:Свидание 💕 ${chosen.theme}
-DESCRIPTION:Твой любимый муж ждёт тебя!
-BEGIN:VALARM
-TRIGGER:-PT30M
-ACTION:DISPLAY
-DESCRIPTION:Свидание через 30 минут 💕
-END:VALARM
-END:VEVENT
-END:VCALENDAR`;
-
-    const blob = new Blob([ics], { type: 'text/calendar' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'date.ics';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
+  });
 
   async function sendTelegramNotification() {
     const message = `💕 *Новое свидание!* 💕\n\n` +
