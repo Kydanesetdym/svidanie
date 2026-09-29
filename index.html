@@ -314,10 +314,7 @@
   });
 
   async function sendTelegramNotification() {
-    const message = `💕 *Новое свидание!* 💕\n\n` +
-                    `🎯 *Тема:* ${chosen.theme}\n` +
-                    `📅 *Когда:* ${chosen.date}\n\n` +
-                    `Она согласилась! 🥰`;
+    const message = `💕 Новое свидание! 💕\n\n🎯 Тема: ${chosen.theme}\n📅 Когда: ${chosen.date}\n\nОна согласилась! 🥰`;
 
     const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
     
@@ -327,16 +324,22 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: TELEGRAM_CHAT_ID,
-          text: message,
-          parse_mode: 'Markdown'
+          text: message
         })
       });
       
+      const result = await response.json();
+      console.log('Telegram response:', result);
+      
       if (!response.ok) {
-        console.error('Telegram error:', await response.text());
+        console.error('Telegram error:', result);
+        alert('Ошибка отправки уведомления. Проверь настройки бота.');
+      } else {
+        console.log('Сообщение успешно отправлено!');
       }
     } catch (error) {
       console.error('Failed to send notification:', error);
+      alert('Ошибка соединения с Telegram');
     }
   }
 </script>
