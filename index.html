@@ -87,7 +87,8 @@
 
   .sad { font-size: 60px; margin: 20px 0; }
 
-  input[type="datetime-local"] {
+  input[type="datetime-local"],
+  input[type="text"] {
     width: 100%;
     padding: 14px;
     border: 2px solid #ff6b9d;
@@ -149,6 +150,17 @@
     <button class="btn theme-btn" data-theme="Сериал 📺"><span class="emoji">📺</span> Сериал</button>
     <button class="btn theme-btn" data-theme="Прогулка пешком 🚶‍♀️"><span class="emoji">🚶‍♀️</span> Прогулка пешком</button>
     <button class="btn theme-btn" data-theme="Поездка на машине 🚗"><span class="emoji">🚗</span> Поездка на машине</button>
+    <button class="btn theme-btn" id="customThemeBtn"><span class="emoji">✨</span> Свой вариант</button>
+  </div>
+</div>
+
+<!-- Экран 2.5: Свой вариант -->
+<div class="screen" id="screen2b">
+  <div class="card">
+    <h2>Напиши свой вариант ✨</h2>
+    <input type="text" id="customThemeInput" placeholder="Например: кино, кафе, массаж...">
+    <button class="btn" id="confirmCustomBtn">Отлично! 💕</button>
+    <button class="btn secondary small" id="backToThemesBtn">Назад</button>
   </div>
 </div>
 
@@ -256,9 +268,31 @@
   // Выбор темы
   document.querySelectorAll('.theme-btn').forEach(btn => {
     btn.addEventListener('click', function() {
-      chosen.theme = this.getAttribute('data-theme');
-      showScreen('screen3');
+      if (this.id === 'customThemeBtn') {
+        showScreen('screen2b');
+      } else {
+        chosen.theme = this.getAttribute('data-theme');
+        showScreen('screen3');
+      }
     });
+  });
+
+  // Подтверждение своего варианта
+  document.getElementById('confirmCustomBtn').addEventListener('click', function() {
+    const customText = document.getElementById('customThemeInput').value.trim();
+    if (!customText) {
+      alert('Напиши, что хочешь делать 🥰');
+      return;
+    }
+    chosen.theme = customText + ' ✨';
+    document.getElementById('customThemeInput').value = '';
+    showScreen('screen3');
+  });
+
+  // Назад к темам
+  document.getElementById('backToThemesBtn').addEventListener('click', function() {
+    document.getElementById('customThemeInput').value = '';
+    showScreen('screen2');
   });
 
   // Добавить в календарь
