@@ -82,7 +82,6 @@
   }
 
   #noBtn {
-    position: absolute;
     transition: all 0.3s ease;
   }
 
@@ -116,19 +115,6 @@
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.15); }
   }
-
-  .loader {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255,255,255,0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 1s linear infinite;
-    margin-right: 8px;
-    vertical-align: middle;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -140,8 +126,8 @@
   <div class="card">
     <h1>💖 Твой любимый муж<br>приглашает тебя на свидание 💖</h1>
     <p>Пойдёшь со мной?</p>
-    <button class="btn" onclick="sayYes()">Да 💕</button>
-    <button class="btn secondary" id="noBtn" onmouseover="runAway()" ontouchstart="runAway()" onclick="sayNo()">Нет</button>
+    <button class="btn" id="yesBtn">Да 💕</button>
+    <button class="btn secondary" id="noBtn">Нет</button>
   </div>
 </div>
 
@@ -150,7 +136,7 @@
   <div class="card">
     <div class="sad">🥺</div>
     <h2>Ты правда не хочешь идти со мной на свидание?</h2>
-    <button class="btn" onclick="backToStart()">Ладно, уговорил 😊</button>
+    <button class="btn" id="backBtn">Ладно, уговорил 😊</button>
   </div>
 </div>
 
@@ -158,11 +144,11 @@
 <div class="screen" id="screen2">
   <div class="card">
     <h2>Ура! 🎉 Что будем делать?</h2>
-    <button class="btn theme-btn" onclick="selectTheme('Аквапарк 🏊‍♀️')"><span class="emoji">🏊‍♀️</span> Аквапарк</button>
-    <button class="btn theme-btn" onclick="selectTheme('Роллы 🍣')"><span class="emoji">🍣</span> Роллы</button>
-    <button class="btn theme-btn" onclick="selectTheme('Сериал 📺')"><span class="emoji">📺</span> Сериал</button>
-    <button class="btn theme-btn" onclick="selectTheme('Прогулка пешком 🚶‍♀️')"><span class="emoji">🚶‍♀️</span> Прогулка пешком</button>
-    <button class="btn theme-btn" onclick="selectTheme('Поездка на машине 🚗')"><span class="emoji">🚗</span> Поездка на машине</button>
+    <button class="btn theme-btn" data-theme="Аквапарк 🏊‍♀️"><span class="emoji">🏊‍♀️</span> Аквапарк</button>
+    <button class="btn theme-btn" data-theme="Роллы 🍣"><span class="emoji">🍣</span> Роллы</button>
+    <button class="btn theme-btn" data-theme="Сериал 📺"><span class="emoji">📺</span> Сериал</button>
+    <button class="btn theme-btn" data-theme="Прогулка пешком 🚶‍♀️"><span class="emoji">🚶‍♀️</span> Прогулка пешком</button>
+    <button class="btn theme-btn" data-theme="Поездка на машине 🚗"><span class="emoji">🚗</span> Поездка на машине</button>
   </div>
 </div>
 
@@ -171,8 +157,8 @@
   <div class="card">
     <h2>Когда встретимся? 🕐</h2>
     <input type="datetime-local" id="dateTime">
-    <button class="btn" onclick="selectTime()">Добавить в календарь 📅</button>
-    <button class="btn secondary small" onclick="selectTime(true)">Пропустить напоминание</button>
+    <button class="btn" id="addCalendarBtn">Добавить в календарь 📅</button>
+    <button class="btn secondary small" id="skipCalendarBtn">Пропустить напоминание</button>
   </div>
 </div>
 
@@ -187,8 +173,8 @@
 
 <script>
   // ========== НАСТРОЙКИ TELEGRAM ==========
-  const TELEGRAM_BOT_TOKEN = '8818498469:AAHJrkzNuxzmpM-lGNxtVsEaNZhHvE2Vjo8';   // ← вставь сюда токен
-  const TELEGRAM_CHAT_ID = '869850863';       // ← вставь сюда свой chat_id
+  const TELEGRAM_BOT_TOKEN = '8818498469:AAHJrkzNuxzmpM-lGNxtVsEaNZhHvE2Vjo8';
+  const TELEGRAM_CHAT_ID = '869850863';
   // ========================================
 
   const chosen = { theme: '', date: '' };
@@ -215,37 +201,75 @@
     document.getElementById(id).classList.add('active');
   }
 
-  function sayYes() { showScreen('screen2'); }
+  // Кнопка "Да"
+  document.getElementById('yesBtn').addEventListener('click', function() {
+    showScreen('screen2');
+  });
 
-  function sayNo() {
-    showScreen('screen1b');
-  }
-
-  function backToStart() { showScreen('screen1'); }
-
-  // Кнопка "Нет" убегает
+  // Кнопка "Нет" - убегает
   let runCount = 0;
+  const noBtn = document.getElementById('noBtn');
+  
   function runAway() {
     runCount++;
-    const btn = document.getElementById('noBtn');
-    const maxX = window.innerWidth - btn.offsetWidth - 40;
-    const maxY = window.innerHeight - btn.offsetHeight - 40;
+    const maxX = window.innerWidth - noBtn.offsetWidth - 40;
+    const maxY = window.innerHeight - noBtn.offsetHeight - 40;
     const x = Math.random() * maxX;
     const y = Math.random() * maxY;
-    btn.style.position = 'fixed';
-    btn.style.left = x + 'px';
-    btn.style.top = y + 'px';
     
-    // После 3 попыток — автоматически показываем уговор
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+    noBtn.style.zIndex = '9999';
+    
+    // После 3 попыток — показываем экран уговора
     if (runCount >= 3) {
-      setTimeout(() => sayNo(), 500);
+      setTimeout(() => {
+        noBtn.style.position = '';
+        noBtn.style.left = '';
+        noBtn.style.top = '';
+        showScreen('screen1b');
+      }, 500);
     }
   }
 
-  function selectTheme(theme) {
-    chosen.theme = theme;
-    showScreen('screen3');
-  }
+  // Для компьютеров
+  noBtn.addEventListener('mouseover', runAway);
+  
+  // Для мобильных
+  noBtn.addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    runAway();
+  });
+  
+  // Если всё-таки нажмут
+  noBtn.addEventListener('click', function() {
+    showScreen('screen1b');
+  });
+
+  // Кнопка "Ладно, уговорил"
+  document.getElementById('backBtn').addEventListener('click', function() {
+    runCount = 0;
+    showScreen('screen1');
+  });
+
+  // Выбор темы
+  document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      chosen.theme = this.getAttribute('data-theme');
+      showScreen('screen3');
+    });
+  });
+
+  // Добавить в календарь
+  document.getElementById('addCalendarBtn').addEventListener('click', function() {
+    selectTime(false);
+  });
+
+  // Пропустить напоминание
+  document.getElementById('skipCalendarBtn').addEventListener('click', function() {
+    selectTime(true);
+  });
 
   function selectTime(skipCalendar) {
     const dt = document.getElementById('dateTime').value;
@@ -259,21 +283,17 @@
       hour: '2-digit', minute: '2-digit'
     });
 
-    // Добавление в календарь iPhone (через .ics файл)
     if (!skipCalendar) {
       downloadICS(dateObj);
     }
 
-    // Отправляем уведомление в Telegram
     sendTelegramNotification();
-
     showScreen('screen4');
   }
 
-  // Создание .ics файла для календаря iPhone
   function downloadICS(dateObj) {
     const start = dateObj.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-    const endDate = new Date(dateObj.getTime() + 3 * 60 * 60 * 1000); // +3 часа
+    const endDate = new Date(dateObj.getTime() + 3 * 60 * 60 * 1000);
     const end = endDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
     
     const ics = `BEGIN:VCALENDAR
@@ -302,7 +322,6 @@ END:VCALENDAR`;
     URL.revokeObjectURL(url);
   }
 
-  // Отправка уведомления в Telegram
   async function sendTelegramNotification() {
     const message = `💕 *Новое свидание!* 💕\n\n` +
                     `🎯 *Тема:* ${chosen.theme}\n` +
